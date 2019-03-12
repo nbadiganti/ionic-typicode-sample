@@ -32,4 +32,10 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-card *ngIf="userPost && userPost.length == 0">
+    <ion-card-header class="post-title">
+      No Posts are available
+    </ion-card-header>
+  </ion-card>
+
 </ion-content>

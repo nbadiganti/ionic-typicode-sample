@@ -1,0 +1,7 @@
+{
+  "name": "marsInterview",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}

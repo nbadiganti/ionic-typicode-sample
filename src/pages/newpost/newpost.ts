@@ -4,6 +4,8 @@ import { Component } from "@angular/core";
 import { NavController, NavParams } from "ionic-angular";
 import { ThrowStmt } from "@angular/compiler";
 import { Storage } from "@ionic/storage";
+import { UtilsProvider } from "../../providers/utils/utils";
+import { NewBlogPost } from "../../models/newblogmodel";
 
 @Component({
   selector: "page-newpost",
@@ -19,6 +21,7 @@ export class NewpostPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private auth: AuthProvider,
+    private utils: UtilsProvider,
     private storage: Storage
   ) {
     this.storage.get(LOCALSTORAGE.USERID).then(
@@ -26,8 +29,8 @@ export class NewpostPage {
         if (data) this.userId = data;
       },
       error => {
-        this.auth.showToastError("Unable to load user posts");
-        console.log(error);
+        this.utils.showToastError("Unable to load user posts");
+        this.utils.log(error);
       }
     );
 
@@ -36,45 +39,53 @@ export class NewpostPage {
         if (data) this.USERPOSTSARRAY = JSON.parse(data);
       },
       error => {
-        this.auth.showToastError("Unable to load user posts");
-        console.log(error);
+        this.utils.showToastError("Unable to load user posts");
+        this.utils.log(error);
       }
     );
   }
 
   ionViewDidLoad() {
-    console.log("ionViewDidLoad NewpostPage");
+    this.utils.log("ionViewDidLoad NewpostPage");
   }
 
   // Posting the data to API server endpoint
   doNewPost() {
     if (this.postTitle && this.postDescription && this.userId) {
-      let body = {
-        title: this.postTitle,
-        body: this.postDescription,
-        userId: this.userId
-      };
-      this.auth.postUserBlogItem(body).then(
-        data => {
-          console.log(data);
-          this.auth.showToast("Posted successfully.");
+      this.utils.showLoader();
+      let newPostItem = new NewBlogPost(
+        this.userId,
+        this.postTitle,
+        this.postDescription
+      );
+
+      this.auth.postUserBlogItem(newPostItem).subscribe(
+        (data: any) => {
+          this.utils.hideLoader();
+          this.utils.log(data);
+          this.utils.showToast("Posted successfully.");
           this.clearFields();
         },
         error => {
-          console.log(error);
+          this.utils.hideLoader();
+          this.utils.log(error);
         }
       );
-
-      // storing the post data locally
-      this.USERPOSTSARRAY.push(body);
-      this.storage.set(
-        LOCALSTORAGE.USERLOCALPOSTS,
-        JSON.stringify(this.USERPOSTSARRAY)
-      );
-      console.log(this.USERPOSTSARRAY);
+      // it stores the blog post locally and fetches in the next request for user posts page
+      this.storeBlogPostLocally(newPostItem);
     } else {
-      alert("Please fill all the fields");
+      this.utils.showToast("Please fill all the fields");
     }
+  }
+
+  storeBlogPostLocally(postItem) {
+    // storing the post data locally
+    this.USERPOSTSARRAY.push(postItem);
+    this.storage.set(
+      LOCALSTORAGE.USERLOCALPOSTS,
+      JSON.stringify(this.USERPOSTSARRAY)
+    );
+    this.utils.log(this.USERPOSTSARRAY);
   }
 
   clearFields() {

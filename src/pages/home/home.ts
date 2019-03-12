@@ -1,10 +1,11 @@
+import { BlogPost } from "./../../models/blogpost";
+import { UtilsProvider } from "./../../providers/utils/utils";
 import { LOCALSTORAGE } from "./../../app/config";
 import { AuthProvider } from "./../../providers/auth/auth";
 import { Component } from "@angular/core";
 import { NavController } from "ionic-angular";
 import { NewpostPage } from "../newpost/newpost";
 import { Storage } from "@ionic/storage";
-import { P } from "@angular/core/src/render3";
 
 @Component({
   selector: "page-home",
@@ -17,7 +18,8 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     private auth: AuthProvider,
-    private storage: Storage
+    private storage: Storage,
+    private utils: UtilsProvider
   ) {}
 
   ionViewDidEnter() {
@@ -27,7 +29,7 @@ export class HomePage {
         if (data) this.loadUserPosts(data);
       },
       error => {
-        this.auth.showToastError("Unable to load user posts");
+        this.utils.showToastError("Unable to load user posts");
       }
     );
 
@@ -36,21 +38,23 @@ export class HomePage {
         if (data) this.loadLocalPosts(data);
       },
       error => {
-        this.auth.showToastError("Unable to load user posts");
+        this.utils.showToastError("Unable to load user posts");
       }
     );
   }
 
   loadUserPosts(userId: any) {
-    this.auth.getUserPosts(userId).then(
-      data => {
+    this.utils.showLoader();
+    this.auth.getUserPosts(userId).subscribe(
+      (data: BlogPost[]) => {
+        this.utils.hideLoader();
         if (data && data.length > 0) {
-          // this.userPosts = data.filter(c => c.userId == this.userId);
           this.userPosts = data;
         }
       },
       error => {
-        this.auth.showToastError("Unable to load user posts");
+        this.utils.hideLoader();
+        this.utils.showToastError("Unable to load user posts");
       }
     );
   }

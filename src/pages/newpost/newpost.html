@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>New Post</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-label floating>Post Title</ion-label>
+      <ion-input type="text" [(ngModel)]="postTitle"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Post Description</ion-label>
+      <ion-textarea type="text" [(ngModel)]="postDescription"></ion-textarea>
+    </ion-item>
+
+  </ion-list>
+  <div padding>
+    <button block ion-button full round (click)="doNewPost();">Post</button>
+  </div>
+</ion-content>

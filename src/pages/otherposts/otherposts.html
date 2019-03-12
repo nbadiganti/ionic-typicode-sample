@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Other Posts
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card *ngFor="let otherPost of otherUserPosts; let $index = index">
+    <ion-card-header class="post-title">
+      {{otherPost.title}}
+    </ion-card-header>
+    <ion-card-content>
+      {{otherPost.body}}
+    </ion-card-content>
+  </ion-card>
+</ion-content>

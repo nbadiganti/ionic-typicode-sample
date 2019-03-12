@@ -14,6 +14,7 @@ import { AuthProvider } from "../providers/auth/auth";
 import { HttpClientModule } from "@angular/common/http";
 import { IonicStorageModule } from "@ionic/storage";
 import { OtherPostsPage } from "../pages/otherposts/otherposts";
+import { UtilsProvider } from "../providers/utils/utils";
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { OtherPostsPage } from "../pages/otherposts/otherposts";
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    AuthProvider
+    AuthProvider,
+    UtilsProvider
   ]
 })
 export class AppModule {}
